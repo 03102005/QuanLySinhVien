@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<time.h>
 #include<string.h>
+
+
 struct date
 {
 	int ngay, thang, nam;
