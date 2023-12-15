@@ -1,73 +1,97 @@
-#include<stdio.h>
-#include<time.h>
-#include<string.h>
 
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct date
-{
-	int ngay, thang, nam;
+struct SinhVien {
+	char MSSV[15];
+	char HoTen[50];
+	char DiaChi[50];
+	int Tuoi;
+	float DiemSo;
 };
+typedef SinhVien SV;
 
-struct sinhVien
-{
-	char id[15];
-	char ten[50];
-	char gioiTinh[4];
-	date ngaySinh;
-	int tuoi;
-	char maLop[15];
-	float diemMon1, diemMon2, diemMon3;
-	float diemTB;
-	char hocLuc[15];
-};
-typedef sinhVien SV;
-
-void xoaXuongDong(char x[])
-{
-	size_t doDai = strlen(x);
-	if(x[doDai-1] == '\n')
-		x[doDai-1] = '\0';
+void XoaXuongDong(char x[]) {
+	size_t size = strlen(x);
+	if(x[size - 1] == '\n')
+		x[size - 1] = '\0';
 }
 
-void nhapSV(SV *sv)
-{
-	printf("MSSV: "); fgets(sv->id, sizeof(sv->id), stdin); xoaXuongDong(sv->id);
-	printf("Ho va ten: "); fgets(sv->ten, sizeof(sv->ten), stdin); xoaXuongDong(sv->ten);
-	printf("Gioi tinh: "); fgets(sv->gioiTinh, sizeof(sv->gioiTinh), stdin); xoaXuongDong(sv->gioiTinh);
-	printf("Ngay sinh: "); scanf("%d %d %d", &sv->ngaySinh.ngay, &sv->ngaySinh.thang, &sv->ngaySinh.nam); getchar();
-	printf("Ma lop: "); fgets(sv->maLop, sizeof(sv->maLop), stdin); xoaXuongDong(sv->maLop);
-	printf("Diem mon 1 = "); scanf("%f", &sv->diemMon1); getchar(); fflush(stdin);
-	printf("Diem mon 2 = "); scanf("%f", &sv->diemMon2); getchar(); fflush(stdin);
-	printf("Diem mon 3 = "); scanf("%f", &sv->diemMon3); getchar(); fflush(stdin);
-
+void NhapThongTinMotSinhVien (SV *sv) {
+	printf("Nhap MSSV: "); 
+	fgets(sv->MSSV, sizeof(sv->MSSV), stdin); XoaXuongDong(sv->MSSV);
+	printf("Nhap ho ten sinh vien: ");
+	fgets(sv->HoTen, sizeof(sv->HoTen), stdin); XoaXuongDong(sv->HoTen);
+	printf("Nhap dia chi: ");
+	fgets(sv->DiaChi, sizeof(sv->DiaChi), stdin); XoaXuongDong(sv->DiaChi);
+	printf("Nhap tuoi: "); scanf("%d", &sv->Tuoi); getchar();
+	printf("Nhap diem so: "); scanf("%f", &sv->DiemSo); getchar();
 }
 
-
-void dsSV(SV ds[], int size)
-{
-	for(int i = 1; i <= size; i++)
-	{
-		printf("Nhap sinh vien thu %d\n", i);
-		nhapSV(&ds[i]);
+void NhapDanhSachSinhVien(SV *sv, int *SoLuongSinhVien) {
+	for (int i = 0; i < *SoLuongSinhVien; i++) {
+		printf("-----------------------------------------\n");
+		printf("Nhap thong tin sinh vien thu %d\n", i+1);
+		NhapThongTinMotSinhVien(sv+i);
 	}
 }
 
-void xuatSV(SV sv[], int size)
-{
-	for(int i = 1; i <= size; i++)
-		printf("%5s \t %5s \t %5s \t %5d/%d/%d \t %5s \t %5.2f \t %5.2f \t %5.2f \t \n", sv[i].id, sv[i].ten, sv[i].gioiTinh, sv[i].ngaySinh.ngay, sv[i].ngaySinh.thang, sv[i].ngaySinh.nam, sv[i].maLop, sv[i].diemMon1, sv[i].diemMon2, sv[i].diemMon3);
-		
+void XuatThongTinMotSinhVien (SV *sv) {
+	printf("MSSV: %s", sv->MSSV); 
+	printf("\tHo va ten: %s", sv->HoTen); 
+	printf("\tDia chi: %s", sv->DiaChi); 
+	printf("\tTuoi: %d", sv->Tuoi);
+	printf("\tDiem so: %.2f", sv->DiemSo); 
 }
 
-int main()
-{
-	SV sv[100];
-	int size;
-	printf("Nhap so luong sinh vien: "); scanf("%d", &size); getchar();
-	dsSV(sv, size);
-	printf("%5s \t %5s \t %5s \t %5s \t %5s \t %5s \t %5s \t %5s", "MSSV", "Ho va ten", "Gioi Tinh", "Ngay sinh", "Ma Lop", "Diem 1", "Diem 2", "Diem 3");
-	printf("\n");
-	xuatSV(sv, size);
+void XuatDanhSachSinhVien(SV *sv, int *SoLuongSinhVien) {
+	for (int i = 0; i < *SoLuongSinhVien; i++) {
+		printf("-----------------------------------------\n");
+		printf("Thong tin sinh vien thu %d\n", i+1);
+		XuatThongTinMotSinhVien(sv+i);
+		printf("\n");
+	}
 }
-	
-	
+
+void SapXepDanhSachSinhVienTheoSoTuoiTangDan(SV *sv, int *SoLuongSinhVien) {
+	for (int i = 0; i < *SoLuongSinhVien - 1; i++) {
+		for (int j = i+1; j < *SoLuongSinhVien; j++) {
+			if ((sv+i)->Tuoi > (sv+j)->Tuoi) {
+				SV temp = *(sv+i);
+				*(sv+i) = *(sv+j);
+				*(sv+j) = temp;
+			}
+		}
+	}
+}
+
+void TimSinhVienCoDiemThapNhat(SV *sv, int SoLuongSinhVien) {
+	int min = (sv+0)->DiemSo;
+	int temp = 0;
+	for (int i = 1; i < SoLuongSinhVien; i++) {
+		if (min > (sv+i)->DiemSo) {
+			min = (sv+i)->DiemSo;
+			temp = i;
+		}
+	}
+	printf("Sinh vien co diem thap nhat la: %s", (sv+temp)->HoTen);
+}
+
+int main() {
+	int SoLuongSinhVien;
+	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
+	SV sv;
+	SV *ptr = &sv;
+	ptr = (SV *) malloc(SoLuongSinhVien * sizeof(SV));
+	NhapDanhSachSinhVien(ptr, &SoLuongSinhVien);
+	XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
+	printf("\n=========================================\n");
+	printf("Sap xep sinh vien theo so tuoi tang dan\n");
+	SapXepDanhSachSinhVienTheoSoTuoiTangDan(ptr, &SoLuongSinhVien);
+	XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
+	printf("\n\n");
+	TimSinhVienCoDiemThapNhat(ptr, SoLuongSinhVien);
+	free(ptr);
+}
