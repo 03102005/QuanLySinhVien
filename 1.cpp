@@ -79,6 +79,19 @@ void TimSinhVienCoDiemThapNhat(SV *sv, int SoLuongSinhVien) {
 	printf("Sinh vien co diem thap nhat la: %s", (sv+temp)->HoTen);
 }
 
+void ThemSinhVien(SV *sv, int *SoLuongSinhVien) {
+	int ViTriThemSV;
+	printf("Nhap vi tri can them sinh vien: "); 
+	scanf("%d", &ViTriThemSV); getchar();
+	NhapThongTinMotSinhVien(sv+ViTriThemSV);
+	for(int i = 0; i < *SoLuongSinhVien; i++) {
+		if(i > ViTriThemSV) {
+			*(sv+i+1) = *(sv+i);
+		}
+	}
+	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
+}
+
 int main() {
 	int SoLuongSinhVien;
 	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
@@ -86,12 +99,41 @@ int main() {
 	SV *ptr = &sv;
 	ptr = (SV *) malloc(SoLuongSinhVien * sizeof(SV));
 	NhapDanhSachSinhVien(ptr, &SoLuongSinhVien);
-	XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
-	printf("\n=========================================\n");
-	printf("Sap xep sinh vien theo so tuoi tang dan\n");
-	SapXepDanhSachSinhVienTheoSoTuoiTangDan(ptr, &SoLuongSinhVien);
-	XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
-	printf("\n\n");
-	TimSinhVienCoDiemThapNhat(ptr, SoLuongSinhVien);
+	while(true) {
+		printf("\n=====================================================");
+		printf("\n|  1. Xuat danh sach sinh vien                      |");
+		printf("\n|  2. Sap xep sinh vien theo so tuoi tang dan       |");
+		printf("\n|  3. Tim sinh vien co diem thap nhat               |");
+		printf("\n|  4. Them sinh vien                                |");
+		printf("\n|  5. Xoa sinh vien                                 |");
+		printf("\n|  6. Thay doi thong tin sinh vien                  |");
+		printf("\n|  7. Thoat chuong trinh                            |");
+		printf("\n=====================================================");
+		int Choose;
+		printf("\nVui long nhap lua chon: ");
+		scanf("%d", &Choose); getchar();
+
+		switch(Choose) {
+			case 1: 
+				XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
+				break;
+			case 2: 
+				printf("\n=========================================\n");
+				printf("Sap xep sinh vien theo so tuoi tang dan\n");
+				SapXepDanhSachSinhVienTheoSoTuoiTangDan(ptr, &SoLuongSinhVien);
+				XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
+				break;
+			case 3: 
+				printf("\n\n");
+				TimSinhVienCoDiemThapNhat(ptr, SoLuongSinhVien);
+				break;
+			case 4:
+				printf("\n\n");
+				ThemSinhVien(ptr, &SoLuongSinhVien);
+				break;
+			case 7: 
+				return 0;
+		}
+	}
 	free(ptr);
 }
