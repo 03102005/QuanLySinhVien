@@ -83,12 +83,12 @@ void ThemSinhVien(SV *sv, int *SoLuongSinhVien) {
 	int ViTriThemSV;
 	printf("Nhap vi tri can them sinh vien: "); 
 	scanf("%d", &ViTriThemSV); getchar();
-	NhapThongTinMotSinhVien(sv+ViTriThemSV);
 	for(int i = 0; i < *SoLuongSinhVien; i++) {
-		if(i > ViTriThemSV) {
+		if(i >= ViTriThemSV-1) {
 			*(sv+i+1) = *(sv+i);
 		}
 	}
+	NhapThongTinMotSinhVien(sv+ViTriThemSV-1);
 	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
 }
 
@@ -100,7 +100,7 @@ int main() {
 	ptr = (SV *) malloc(SoLuongSinhVien * sizeof(SV));
 	NhapDanhSachSinhVien(ptr, &SoLuongSinhVien);
 	while(true) {
-		printf("\n=====================================================");
+		printf("\n===================== M E N U =======================");
 		printf("\n|  1. Xuat danh sach sinh vien                      |");
 		printf("\n|  2. Sap xep sinh vien theo so tuoi tang dan       |");
 		printf("\n|  3. Tim sinh vien co diem thap nhat               |");
