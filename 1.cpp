@@ -1,11 +1,10 @@
-
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 struct SinhVien {
-	char MSSV[15];
+	char MSSV[11];
 	char HoTen[50];
 	char DiaChi[50];
 	int Tuoi;
@@ -92,6 +91,20 @@ void ThemSinhVien(SV *sv, int *SoLuongSinhVien) {
 	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
 }
 
+void XoaSinhvienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
+	char ID[11];
+	int temp = -1;
+	printf("Nhap MSSV cua sinh vien can xoa: ");
+	scanf("%s", &ID); XoaXuongDong(ID);
+	for(int i = 0; i < *SoLuongSinhVien; i++) {
+		if(strcmp(ID, (sv+i)->MSSV) == 0) 
+			temp = i;
+	}
+	for(int i = temp; i < *SoLuongSinhVien-1; i++)
+		*(sv + i) = *(sv + i + 1);
+	sv = (SV *) realloc(sv, --*SoLuongSinhVien);
+}
+
 int main() {
 	int SoLuongSinhVien;
 	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
@@ -130,6 +143,9 @@ int main() {
 			case 4:
 				printf("\n\n");
 				ThemSinhVien(ptr, &SoLuongSinhVien);
+				break;
+			case 5:
+				XoaSinhvienTheoMSSV(ptr, &SoLuongSinhVien);
 				break;
 			case 7: 
 				return 0;
