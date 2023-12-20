@@ -135,7 +135,8 @@ int main() {
 		printf("\n|  4. Them sinh vien                                |");
 		printf("\n|  5. Xoa sinh vien                                 |");
 		printf("\n|  6. Thay doi thong tin sinh vien                  |");
-		printf("\n|  7. Thoat chuong trinh                            |");
+		printf("\n|  7. Xoa man hinh                                  |");
+		printf("\n|  8. Thoat chuong trinh                            |");
 		printf("\n=====================================================");
 		int Choose;
 		printf("\nVui long nhap lua chon: ");
@@ -165,7 +166,10 @@ int main() {
 			case 6:
 				ThayDoiThongTinSinhVien(ptr, &SoLuongSinhVien);
 				break;
-			case 7: 
+			case 7:
+				system("cls");
+				break;
+			case 8: 
 				return 0;
 		}
 	}
