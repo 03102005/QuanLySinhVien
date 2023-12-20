@@ -82,20 +82,21 @@ void ThemSinhVien(SV *sv, int *SoLuongSinhVien) {
 	int ViTriThemSV;
 	printf("Nhap vi tri can them sinh vien: "); 
 	scanf("%d", &ViTriThemSV); getchar();
+	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
 	for(int i = 0; i < *SoLuongSinhVien; i++) {
 		if(i >= ViTriThemSV-1) {
 			*(sv+i+1) = *(sv+i);
 		}
 	}
 	NhapThongTinMotSinhVien(sv+ViTriThemSV-1);
-	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
+	printf("Them sinh vien thanh cong !");
 }
 
 void XoaSinhvienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
 	char ID[11];
 	int temp = -1;
 	printf("Nhap MSSV cua sinh vien can xoa: ");
-	scanf("%s", &ID); XoaXuongDong(ID);
+	fgets(ID, sizeof(ID), stdin); XoaXuongDong(ID);
 	for(int i = 0; i < *SoLuongSinhVien; i++) {
 		if(strcmp(ID, (sv+i)->MSSV) == 0) 
 			temp = i;
@@ -103,6 +104,20 @@ void XoaSinhvienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
 	for(int i = temp; i < *SoLuongSinhVien-1; i++)
 		*(sv + i) = *(sv + i + 1);
 	sv = (SV *) realloc(sv, --*SoLuongSinhVien);
+	printf("Xoa sinh vien thanh cong !");
+}
+
+void ThayDoiThongTinSinhVien(SV *sv, int *SoLuongSinhVien) {
+	char ID[11];
+	int temp = -1;
+	printf("Nhap MSSV cua sinh vien can thay doi thong tin: ");
+	fgets(ID, sizeof(ID), stdin); XoaXuongDong(ID);
+	for(int i = 0; i < *SoLuongSinhVien; i++) {
+		if(strcmp(ID, (sv+i)->MSSV) == 0)
+			temp = i;
+	}
+	NhapThongTinMotSinhVien(sv+temp);
+	printf("Thay doi thong tin sinh vien thanh cong !");
 }
 
 int main() {
@@ -137,15 +152,18 @@ int main() {
 				XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 3: 
-				printf("\n\n");
+				printf("\n");
 				TimSinhVienCoDiemThapNhat(ptr, SoLuongSinhVien);
 				break;
 			case 4:
-				printf("\n\n");
+				printf("\n");
 				ThemSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 5:
 				XoaSinhvienTheoMSSV(ptr, &SoLuongSinhVien);
+				break;
+			case 6:
+				ThayDoiThongTinSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 7: 
 				return 0;
