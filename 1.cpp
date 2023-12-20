@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 struct SinhVien {
 	char MSSV[11];
@@ -12,6 +13,13 @@ struct SinhVien {
 };
 typedef SinhVien SV;
 
+void TextColor(int x)//X là mã màu
+{
+ //Các hàm này là hàm thao tác API với windows bạn cứ coppy thôi không cần phải hiểu quá sâu
+    HANDLE h= GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, x);
+}
+
 void XoaXuongDong(char x[]) {
 	size_t size = strlen(x);
 	if(x[size - 1] == '\n')
@@ -19,6 +27,7 @@ void XoaXuongDong(char x[]) {
 }
 
 void NhapThongTinMotSinhVien (SV *sv) {
+	TextColor(11);
 	printf("Nhap MSSV: "); 
 	fgets(sv->MSSV, sizeof(sv->MSSV), stdin); XoaXuongDong(sv->MSSV);
 	printf("Nhap ho ten sinh vien: ");
@@ -121,6 +130,7 @@ void ThayDoiThongTinSinhVien(SV *sv, int *SoLuongSinhVien) {
 }
 
 int main() {
+	TextColor(11);
 	int SoLuongSinhVien;
 	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
 	SV sv;
