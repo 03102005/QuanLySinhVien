@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+	
+
 
 struct SinhVien {
-	char MSSV[11];
-	char HoTen[50];
-	char DiaChi[50];
+	char MSSV[12];
+	char HoTen[25];
+	char DiaChi[25];
 	int Tuoi;
 	float DiemSo;
 };
@@ -27,7 +29,6 @@ void XoaXuongDong(char x[]) {
 }
 
 void NhapThongTinMotSinhVien (SV *sv) {
-	TextColor(11);
 	printf("Nhap MSSV: "); 
 	fgets(sv->MSSV, sizeof(sv->MSSV), stdin); XoaXuongDong(sv->MSSV);
 	printf("Nhap ho ten sinh vien: ");
@@ -47,20 +48,59 @@ void NhapDanhSachSinhVien(SV *sv, int *SoLuongSinhVien) {
 }
 
 void XuatThongTinMotSinhVien (SV *sv) {
-	printf("MSSV: %s", sv->MSSV); 
-	printf("\tHo va ten: %s", sv->HoTen); 
-	printf("\tDia chi: %s", sv->DiaChi); 
-	printf("\tTuoi: %d", sv->Tuoi);
-	printf("\tDiem so: %.2f", sv->DiemSo); 
+	printf("| %-11s ", sv->MSSV); 
+	printf("| %-25s ", sv->HoTen); 
+	printf("| %-25s ", sv->DiaChi); 
+	printf("| %-5d ", sv->Tuoi);
+	printf("| %-5.2f |", sv->DiemSo); 
 }
 
 void XuatDanhSachSinhVien(SV *sv, int *SoLuongSinhVien) {
+	printf("=============================================================================================\n");
+	printf("| %-3s | %-11s | %-25s | %-25s | %-5s | %-5s |", "STT", "MSSV", "Ho va ten", "Dia chi", "Tuoi", "Diem");
+	printf("\n=============================================================================================\n");
 	for (int i = 0; i < *SoLuongSinhVien; i++) {
-		printf("-----------------------------------------\n");
-		printf("Thong tin sinh vien thu %d\n", i+1);
-		XuatThongTinMotSinhVien(sv+i);
-		printf("\n");
+		//XuatThongTinMotSinhVien(sv+i);
+		printf("| %-3d ", i+1);
+		printf("| %-11s ", (sv+i)->MSSV); 
+		printf("| %-25s ", (sv+i)->HoTen); 
+		printf("| %-25s ", (sv+i)->DiaChi); 
+		printf("| %-5d ", (sv+i)->Tuoi);
+		printf("| %-5.2f |", (sv+i)->DiemSo); 
+		printf("\n---------------------------------------------------------------------------------------------\n");
 	}
+}
+
+void GhiThongTinSinhVienVaoFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
+	FILE *fptr;
+	fptr = fopen(nameFile, "w");
+	fprintf(fptr, "=============================================================================================\n");
+	fprintf(fptr, "| %-3s | %-11s | %-25s | %-25s | %-5s | %-5s |", "STT", "MSSV", "Ho va ten", "Dia chi", "Tuoi", "Diem");
+	fprintf(fptr, "\n=============================================================================================\n");
+	for (int i = 0; i < *SoLuongSinhVien; i++) {
+		//XuatThongTinMotSinhVien(sv+i);
+		fprintf(fptr, "| %-3d ", i+1);
+		fprintf(fptr, "| %-11s ", (sv+i)->MSSV); 
+		fprintf(fptr, "| %-25s ", (sv+i)->HoTen); 
+		fprintf(fptr, "| %-25s ", (sv+i)->DiaChi); 
+		fprintf(fptr, "| %-5d ", (sv+i)->Tuoi);
+		fprintf(fptr, "| %-5.2f |", (sv+i)->DiemSo); 
+		fprintf(fptr,"\n---------------------------------------------------------------------------------------------\n");
+	}
+	fclose(fptr);
+}
+
+void DocThongTinSinhVienTuFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
+	FILE *fptr;
+	fptr = fopen(nameFile, "r");
+	for(int i = 0; i < *SoLuongSinhVien; i++) {
+		fgets((sv+i)->MSSV, sizeof((sv+i)->MSSV), fptr); XoaXuongDong((sv+i)->MSSV);
+		fgets((sv+i)->HoTen, sizeof((sv+i)->HoTen), fptr); XoaXuongDong((sv+i)->HoTen);
+		fgets((sv+i)->DiaChi, sizeof((sv+i)->DiaChi), fptr); XoaXuongDong((sv+i)->DiaChi);
+		fscanf(fptr, "%d", &(sv+i)->Tuoi); getchar();
+		fscanf(fptr, "%f", &(sv+i)->DiemSo); getchar();
+	}
+	fclose(fptr);
 }
 
 void SapXepDanhSachSinhVienTheoSoTuoiTangDan(SV *sv, int *SoLuongSinhVien) {
@@ -131,6 +171,7 @@ void ThayDoiThongTinSinhVien(SV *sv, int *SoLuongSinhVien) {
 
 int main() {
 	TextColor(11);
+	char nameFile[] = "Quanlysinhvien";
 	int SoLuongSinhVien;
 	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
 	SV sv;
@@ -145,8 +186,10 @@ int main() {
 		printf("\n|  4. Them sinh vien                                |");
 		printf("\n|  5. Xoa sinh vien                                 |");
 		printf("\n|  6. Thay doi thong tin sinh vien                  |");
-		printf("\n|  7. Xoa man hinh                                  |");
-		printf("\n|  8. Thoat chuong trinh                            |");
+		printf("\n|  7. Ghi thong tin sinh vien vao file              |");
+		printf("\n|  8. Doc thong tin sinh vien tu file               |");
+		printf("\n|  9. Xoa man hinh                                  |");
+		printf("\n|  10. Thoat chuong trinh                           |");
 		printf("\n=====================================================");
 		int Choose;
 		printf("\nVui long nhap lua chon: ");
@@ -177,9 +220,15 @@ int main() {
 				ThayDoiThongTinSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 7:
-				system("cls");
+				GhiThongTinSinhVienVaoFile(ptr, &SoLuongSinhVien, nameFile);
 				break;
 			case 8: 
+				DocThongTinSinhVienTuFile(ptr, &SoLuongSinhVien, nameFile);
+				break;
+			case 9:
+				system("cls");
+				break;
+			case 10: 
 				return 0;
 		}
 	}
