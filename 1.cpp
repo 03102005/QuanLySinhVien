@@ -74,11 +74,14 @@ void XuatDanhSachSinhVien(SV *sv, int *SoLuongSinhVien) {
 void GhiThongTinSinhVienVaoFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
 	FILE *fptr;
 	fptr = fopen(nameFile, "w");
+	if(fptr == NULL) {
+		printf("Error !");
+		exit(1);
+	}
 	fprintf(fptr, "=============================================================================================\n");
 	fprintf(fptr, "| %-3s | %-11s | %-25s | %-25s | %-5s | %-5s |", "STT", "MSSV", "Ho va ten", "Dia chi", "Tuoi", "Diem");
 	fprintf(fptr, "\n=============================================================================================\n");
 	for (int i = 0; i < *SoLuongSinhVien; i++) {
-		//XuatThongTinMotSinhVien(sv+i);
 		fprintf(fptr, "| %-3d ", i+1);
 		fprintf(fptr, "| %-11s ", (sv+i)->MSSV); 
 		fprintf(fptr, "| %-25s ", (sv+i)->HoTen); 
@@ -93,6 +96,10 @@ void GhiThongTinSinhVienVaoFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
 void DocThongTinSinhVienTuFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
 	FILE *fptr;
 	fptr = fopen(nameFile, "r");
+	if(fptr == NULL) {
+		printf("Error !");
+		exit(1);
+	}
 	for(int i = 0; i < *SoLuongSinhVien; i++) {
 		fgets((sv+i)->MSSV, sizeof((sv+i)->MSSV), fptr); XoaXuongDong((sv+i)->MSSV);
 		fgets((sv+i)->HoTen, sizeof((sv+i)->HoTen), fptr); XoaXuongDong((sv+i)->HoTen);
@@ -103,10 +110,10 @@ void DocThongTinSinhVienTuFile(SV *sv, int *SoLuongSinhVien, char nameFile[]) {
 	fclose(fptr);
 }
 
-void SapXepDanhSachSinhVienTheoSoTuoiTangDan(SV *sv, int *SoLuongSinhVien) {
-	for (int i = 0; i < *SoLuongSinhVien - 1; i++) {
+void SapXepSinhVienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
+	for (int i = 0; i < *SoLuongSinhVien; i++) {
 		for (int j = i+1; j < *SoLuongSinhVien; j++) {
-			if ((sv+i)->Tuoi > (sv+j)->Tuoi) {
+			if (strcmp((sv+i)->MSSV, (sv+j)->MSSV) > 0) {
 				SV temp = *(sv+i);
 				*(sv+i) = *(sv+j);
 				*(sv+j) = temp;
@@ -132,12 +139,11 @@ void ThemSinhVien(SV *sv, int *SoLuongSinhVien) {
 	printf("Nhap vi tri can them sinh vien: "); 
 	scanf("%d", &ViTriThemSV); getchar();
 	sv = (SV *) realloc(sv, ++*SoLuongSinhVien);
-	for(int i = 0; i < *SoLuongSinhVien; i++) {
-		if(i >= ViTriThemSV-1) {
+	for(int i = *SoLuongSinhVien-2; i >= ViTriThemSV-1; i--) {
 			*(sv+i+1) = *(sv+i);
-		}
 	}
 	NhapThongTinMotSinhVien(sv+ViTriThemSV-1);
+	*(sv+ViTriThemSV-1) = *(sv+ViTriThemSV-1);
 	printf("Them sinh vien thanh cong !");
 }
 
@@ -150,6 +156,10 @@ void XoaSinhvienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
 		if(strcmp(ID, (sv+i)->MSSV) == 0) 
 			temp = i;
 	}
+	if(temp == -1) {
+		printf("MSSV khong hop le !");
+		return;
+	}
 	for(int i = temp; i < *SoLuongSinhVien-1; i++)
 		*(sv + i) = *(sv + i + 1);
 	sv = (SV *) realloc(sv, --*SoLuongSinhVien);
@@ -157,7 +167,7 @@ void XoaSinhvienTheoMSSV(SV *sv, int *SoLuongSinhVien) {
 }
 
 void ThayDoiThongTinSinhVien(SV *sv, int *SoLuongSinhVien) {
-	char ID[11];
+	char ID[12];
 	int temp = -1;
 	printf("Nhap MSSV cua sinh vien can thay doi thong tin: ");
 	fgets(ID, sizeof(ID), stdin); XoaXuongDong(ID);
@@ -165,12 +175,16 @@ void ThayDoiThongTinSinhVien(SV *sv, int *SoLuongSinhVien) {
 		if(strcmp(ID, (sv+i)->MSSV) == 0)
 			temp = i;
 	}
+	if(temp == -1) {
+		printf("MSSV khong hop le !");
+		return;
+	}
 	NhapThongTinMotSinhVien(sv+temp);
 	printf("Thay doi thong tin sinh vien thanh cong !");
 }
 
 int main() {
-	TextColor(11);
+	TextColor(5);
 	char nameFile[] = "Quanlysinhvien";
 	int SoLuongSinhVien;
 	printf("Nhap so luong sinh vien: "); scanf("%d", &SoLuongSinhVien); getchar();
@@ -181,7 +195,7 @@ int main() {
 	while(true) {
 		printf("\n===================== M E N U =======================");
 		printf("\n|  1. Xuat danh sach sinh vien                      |");
-		printf("\n|  2. Sap xep sinh vien theo so tuoi tang dan       |");
+		printf("\n|  2. Sap xep sinh vien theo ma so sinh vien        |");
 		printf("\n|  3. Tim sinh vien co diem thap nhat               |");
 		printf("\n|  4. Them sinh vien                                |");
 		printf("\n|  5. Xoa sinh vien                                 |");
@@ -200,17 +214,13 @@ int main() {
 				XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 2: 
-				printf("\n=========================================\n");
-				printf("Sap xep sinh vien theo so tuoi tang dan\n");
-				SapXepDanhSachSinhVienTheoSoTuoiTangDan(ptr, &SoLuongSinhVien);
+				SapXepSinhVienTheoMSSV(ptr, &SoLuongSinhVien);
 				XuatDanhSachSinhVien(ptr, &SoLuongSinhVien);
 				break;
-			case 3: 
-				printf("\n");
+			case 3:
 				TimSinhVienCoDiemThapNhat(ptr, SoLuongSinhVien);
 				break;
 			case 4:
-				printf("\n");
 				ThemSinhVien(ptr, &SoLuongSinhVien);
 				break;
 			case 5:
